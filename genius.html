@@ -78,22 +78,14 @@
         green: 'rgb(70, 204, 115)',
     }
 
+    const colorAudioPaths = {
+        blue: './static/audio/C.mp3',
+        red: './static/audio/F.mp3',
+        yellow: './static/audio/G.mp3',
+        green: './static/audio/Asharp.mp3'
+    }
+
     const colorsArray = ['blue', 'red', 'yellow', 'green'];
-    // acender um de cada vez
-    // function changeColor(color) {
-    //     const selectedId = '#' + color;
-    //     const selectedButton = document.querySelector(selectedId);
-
-    //     if (selectedButton) {
-    //         const allButtons = Array.from(document.querySelector('.div-main-grid').children);
-            
-    //         allButtons.forEach(e => {
-    //             e.style.backgroundColor = colorsRGB['default'];
-    //         })
-
-    //         selectedButton.style.backgroundColor = colorsRGB[color];
-    //     }
-    // }
 
     // acender com temporizador para desligar
     function flashColor(color) {
@@ -129,6 +121,8 @@
         const buttonElement = document.querySelector(buttonId);
 
         flashColor(buttonColor);
+        audio = new Audio(colorAudioPaths[buttonColor]);
+        audio.play();
     }
 
     function playSequence(randomColorSequence, startId) {
@@ -158,5 +152,4 @@
         sequenceAmount +=1
     }
 </script>
-
 </html>
