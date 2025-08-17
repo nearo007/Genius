@@ -19,6 +19,29 @@
             height: 100%;
         }
 
+        .button-play {
+            display: flex;
+            padding: 10px 10px 10px 15px;
+            border-radius: 50%;
+            background-color: white;
+
+            margin-bottom: 30px;
+            transition: background-color .1s;
+        }
+
+        .button-play:hover {
+            background-color: rgb(192, 192, 192);
+        }
+
+        .button-play:active {
+            background-color: white;
+        }
+
+        .button-play img {
+            width: 40px;
+            height: 40px;
+        }
+
         .div-main-grid {
             display: grid;
             width: 500px;
@@ -55,8 +78,8 @@
 </head>
 
 <body>
-    <button onclick="startNewGame()">
-        Iniciar
+    <button class="button-play" onclick="startNewGame()">
+        <img src="./static/img/icons/play-button-arrowhead.png" alt="Play">
     </button>
 
     <div class="div-main-grid">
@@ -144,6 +167,11 @@
         }, 1000)
     }
 
+    async function getUserSequence() {
+        while (true) {
+            const user = await document.addEventListener();
+        }
+    }
     function startNewGame() {
         sequenceAmount = 5;
         const randomColorSequence = getRandomColorSequence(sequenceAmount)
