@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -41,6 +43,7 @@
         .button-play img {
             width: 40px;
             height: 40px;
+            user-select: none;
         }
 
         .div-main-grid {
@@ -74,7 +77,6 @@
         .div-main-grid div:hover {
             background-color: rgb(212, 212, 212);
         }
-
     </style>
 </head>
 
@@ -84,15 +86,15 @@
     </button>
 
     <div class="div-main-grid">
-        <div id="blue" onclick="flashButton('blue')"></div>
-        <div id="red" onclick="flashButton('red')"></div>
-        <div id="yellow" onclick="flashButton('yellow')"></div> 
-        <div id="green" onclick="flashButton('green')"></div>
+        <div id="blue" colorButton onclick="flashButton('blue')"></div>
+        <div id="red" colorButton onclick="flashButton('red')"></div>
+        <div id="yellow" colorButton onclick="flashButton('yellow')"></div>
+        <div id="green" colorButton onclick="flashButton('green')"></div>
     </div>
 </body>
 
 <script>
-    let sequenceAmount = 0;
+    let sequenceAmount = 1;
 
     const colorsRGB = {
         default: 'rgb(182, 182, 182)',
@@ -111,7 +113,6 @@
 
     const colorsArray = ['blue', 'red', 'yellow', 'green'];
 
-    // acender com temporizador para desligar
     function flashButton(color) {
         const selectedId = '#' + color;
         const selectedButton = document.querySelector(selectedId);
@@ -141,7 +142,7 @@
 
         return randomColorSequence;
     }
-    
+
     function triggerButton(buttonColor) {
         const buttonId = '#' + buttonColor;
         const buttonElement = document.querySelector(buttonId);
@@ -150,73 +151,148 @@
     }
 
     function playSequence(randomColorSequence, startId) {
-        if (!randomColorSequence[startId+1]) {
+        const playButton = document.querySelector('.button-play');
+        playButton.style.pointerEvents = 'none';
+
+        return new Promise((resolve) => {
             setTimeout(() => {
+                if (!randomColorSequence[startId + 1]) {
+                    // TODO REMOVE THIS
+                    console.log(randomColorSequence[startId]);
+                    
+                    triggerButton(randomColorSequence[startId])
+                    playButton.style.pointerEvents = 'auto';
+                    return resolve();
+                }
+                
                 // TODO REMOVE THIS
                 console.log(randomColorSequence[startId]);
-                triggerButton(randomColorSequence[startId])
+                triggerButton(randomColorSequence[startId]);
+                resolve(playSequence(randomColorSequence, startId + 1));
             }, 1000);
-            
-            return;
-        }
-
-        setTimeout(() => {
-            // TODO REMOVE THIS
-            console.log(randomColorSequence[startId]);
-            triggerButton(randomColorSequence[startId]);
-            playSequence(randomColorSequence, startId + 1)
-        }, 1000)
+        })
     }
 
-    async function getUserSequence(sequenceAmount) {
+    // function playSequence(randomColorSequence, startId) {
+    //     const playButton = document.querySelector('.button-play');
+    //     playButton.style.pointerEvents = 'none';
+
+    //     setTimeout(() => {
+    //         if (!randomColorSequence[startId + 1]) {
+    //             // TODO REMOVE THIS
+    //             console.log(randomColorSequence[startId]);
+                
+    //             triggerButton(randomColorSequence[startId])
+        
+    //             playButton.style.pointerEvents = 'all';
+    //             return;
+    //         }
+            
+    //         // TODO REMOVE THIS
+    //         console.log(randomColorSequence[startId]);
+    //         triggerButton(randomColorSequence[startId]);
+    //         playSequence(randomColorSequence, startId + 1);
+    //     }, 1000);
+    // }
+
+
+    // function playSequence(randomColorSequence, startId) {
+    //     const playButton = document.querySelector('.button-play');
+    //     playButton.style.pointerEvents = 'none';
+
+    //     if (!randomColorSequence[startId + 1]) {
+    //         setTimeout(() => {
+    //             // TODO REMOVE THIS
+    //             console.log(randomColorSequence[startId]);
+    //             triggerButton(randomColorSequence[startId])
+
+    //             playButton.style.pointerEvents = 'all';
+    //         }, 1000);
+
+    //         return;
+    //     }
+
+    //     setTimeout(() => {
+    //         // TODO REMOVE THIS
+    //         console.log(randomColorSequence[startId]);
+    //         triggerButton(randomColorSequence[startId]);
+    //         playSequence(randomColorSequence, startId + 1)
+    //     }, 1000)
+    // }
+
+    // TODO ARRUMAR
+    function toggleButtonClickable(buttonId) {
+        const buttonFullId = '#' + buttonId;
+        buttonElement = document.querySelector(buttonFullId);
+
+        console.log(buttonElement.style.pointerEvents);
+        if (buttonElement) {
+            if (buttonElement.style.pointerEvents == 'auto') {
+                buttonElement.style.pointerEvents == 'none';
+            }
+
+            else if (buttonElement.style.pointerEvents == 'none') {
+                buttonElement.style.pointerEvents == 'auto';
+            }
+        }
+    }
+
+    function arrayEquals(arr1, arr2) {
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+
+        return arr1.every((value, index) => value === arr2[index]);
+    }
+
+    function getUserSequence(sequenceAmount) {
         const userSequence = [];
 
-        const buttonElement = document.querySelector('#blue');
-     
+        const buttons = document.querySelectorAll('[colorButton]');
+        console.log(buttons);
+
+        buttons.forEach(buttonElement => {
             buttonElement.addEventListener('click', () => {
                 userSequence.push(buttonElement.id);
-
+    
                 // TODO REMOVE THIS
                 console.log(userSequence.length, sequenceAmount);
             })
-
-        const completedSequence = await new Promise(resolve => {
-            if (userSequence.length == sequenceAmount) {
-                resolve(buttonElement.id);
-            }
         })
 
+        return new Promise(resolve => {
+            const checkSequenceInterval = setInterval(() => {
+                // TODO REMOVE THIS
+                console.log('waiting');
+
+                if (userSequence.length == sequenceAmount) {
+                    clearInterval(checkSequenceInterval);
+                    return resolve(userSequence);
+                }
+            }, 200);
+        })
+    }
+    
+    async function startNewGame() {
+        // TODO RETURN TO 1
+        // sequenceAmount = 1;
+        const randomColorSequence = getRandomColorSequence(sequenceAmount);
+
+        await playSequence(randomColorSequence, 0);
+
+        userSequence = await getUserSequence(sequenceAmount);
         
+        console.log(userSequence, randomColorSequence)
+        if (arrayEquals(userSequence, randomColorSequence)) {
+            console.log('same!');
+        }
 
+        else {
+            console.log('different!');
+        }
+
+        sequenceAmount += 1;
     }
-
-    // async function getUserSequence(sequenceAmount) {
-    //     const userSequence = [];
-
-    //     const buttonBlue = document.querySelector('#blue');
-    //     const buttonRed = document.querySelector('#red');
-    //     const buttonYellow = document.querySelector('#yellow');
-    //     const buttonGreen = document.querySelector('#green');
-
-    //     for (let i=0; i<sequenceAmount; i++) {
-    //         const pressedBlue = await new Promise(resolve => {        
-    //             buttonBlue.addEventListener('click', () => {
-    //                 resolve(userSequence.push(buttonBlue.id));
-    //             });
-    //         });
-
-    //         console.log(userSequence);
-    //     }
-    // }
-
-    function startNewGame() {
-        sequenceAmount = 5;
-        const randomColorSequence = getRandomColorSequence(sequenceAmount)
-
-        playSequence(randomColorSequence, 0)
-        sequenceAmount +=1
-    }
-
-    getUserSequence(5);
 </script>
+
 </html>
