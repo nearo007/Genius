@@ -169,12 +169,14 @@
     }
 
     async function getUserSequence(sequenceAmount) {
-        const userSequence = ['abobra'];
+        const userSequence = [];
 
         const buttonElement = document.querySelector('#blue');
      
             buttonElement.addEventListener('click', () => {
                 userSequence.push(buttonElement.id);
+
+                // TODO REMOVE THIS
                 console.log(userSequence.length, sequenceAmount);
             })
 
