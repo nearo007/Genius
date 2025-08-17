@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Nearo Genius</title>
+    <link rel="shortcut icon" href="./static/favicon/favicon.ico" type="image/x-icon">
     <style>
         * {
             box-sizing: border-box;
@@ -83,10 +84,10 @@
     </button>
 
     <div class="div-main-grid">
-        <div id="blue" onclick="flashColor('blue')"></div>
-        <div id="red" onclick="flashColor('red')"></div>
-        <div id="yellow" onclick="flashColor('yellow')"></div> 
-        <div id="green" onclick="flashColor('green')"></div>
+        <div id="blue" onclick="flashButton('blue')"></div>
+        <div id="red" onclick="flashButton('red')"></div>
+        <div id="yellow" onclick="flashButton('yellow')"></div> 
+        <div id="green" onclick="flashButton('green')"></div>
     </div>
 </body>
 
@@ -111,12 +112,14 @@
     const colorsArray = ['blue', 'red', 'yellow', 'green'];
 
     // acender com temporizador para desligar
-    function flashColor(color) {
+    function flashButton(color) {
         const selectedId = '#' + color;
         const selectedButton = document.querySelector(selectedId);
 
         if (selectedButton) {
             selectedButton.style.backgroundColor = colorsRGB[color];
+            audio = new Audio(colorAudioPaths[color]);
+            audio.play();
 
             setTimeout(() => {
                 selectedButton.style.backgroundColor = colorsRGB['default'];
@@ -143,9 +146,7 @@
         const buttonId = '#' + buttonColor;
         const buttonElement = document.querySelector(buttonId);
 
-        flashColor(buttonColor);
-        audio = new Audio(colorAudioPaths[buttonColor]);
-        audio.play();
+        flashButton(buttonColor);
     }
 
     function playSequence(randomColorSequence, startId) {
@@ -167,11 +168,45 @@
         }, 1000)
     }
 
-    async function getUserSequence() {
-        while (true) {
-            const user = await document.addEventListener();
-        }
+    async function getUserSequence(sequenceAmount) {
+        const userSequence = ['abobra'];
+
+        const buttonElement = document.querySelector('#blue');
+     
+            buttonElement.addEventListener('click', () => {
+                userSequence.push(buttonElement.id);
+                console.log(userSequence.length, sequenceAmount);
+            })
+
+        const completedSequence = await new Promise(resolve => {
+            if (userSequence.length == sequenceAmount) {
+                resolve(buttonElement.id);
+            }
+        })
+
+        
+
     }
+
+    // async function getUserSequence(sequenceAmount) {
+    //     const userSequence = [];
+
+    //     const buttonBlue = document.querySelector('#blue');
+    //     const buttonRed = document.querySelector('#red');
+    //     const buttonYellow = document.querySelector('#yellow');
+    //     const buttonGreen = document.querySelector('#green');
+
+    //     for (let i=0; i<sequenceAmount; i++) {
+    //         const pressedBlue = await new Promise(resolve => {        
+    //             buttonBlue.addEventListener('click', () => {
+    //                 resolve(userSequence.push(buttonBlue.id));
+    //             });
+    //         });
+
+    //         console.log(userSequence);
+    //     }
+    // }
+
     function startNewGame() {
         sequenceAmount = 5;
         const randomColorSequence = getRandomColorSequence(sequenceAmount)
@@ -179,5 +214,7 @@
         playSequence(randomColorSequence, 0)
         sequenceAmount +=1
     }
+
+    getUserSequence(5);
 </script>
 </html>
