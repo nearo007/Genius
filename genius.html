@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            width: 100%;
+            height: 100%;
+        }
+
+        .div-main-grid {
+            display: grid;
+            width: 500px;
+            height: 500px;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .div-main-grid div {
+            border: 5px solid rgb(68, 68, 68);
+            box-shadow: inset 0 0 15px rgba(10, 0, 65, 0.3);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+
+            background-color: rgb(182, 182, 182);
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-size: 30px;
+            color: rgb(255, 255, 255);
+            border-radius: 50%;
+            transition: background-color .1s;
+            user-select: none;
+        }
+
+        .div-main-grid div:hover {
+            background-color: rgb(212, 212, 212);
+        }
+
+    </style>
+</head>
+
+<body>
+    <button onclick="startNewGame()">
+        Iniciar
+    </button>
+
+    <div class="div-main-grid">
+        <div id="blue" onclick="flashColor('blue')"></div>
+        <div id="red" onclick="flashColor('red')"></div>
+        <div id="yellow" onclick="flashColor('yellow')"></div> 
+        <div id="green" onclick="flashColor('green')"></div>
+    </div>
+</body>
+
+<script>
+    let sequenceAmount = 0;
+
+    const colorsRGB = {
+        default: 'rgb(182, 182, 182)',
+        blue: 'rgb(70, 144, 204)',
+        red: 'rgb(204, 70, 81)',
+        yellow: 'rgb(202, 204, 70)',
+        green: 'rgb(70, 204, 115)',
+    }
+
+    const colorsArray = ['blue', 'red', 'yellow', 'green'];
+    // acender um de cada vez
+    // function changeColor(color) {
+    //     const selectedId = '#' + color;
+    //     const selectedButton = document.querySelector(selectedId);
+
+    //     if (selectedButton) {
+    //         const allButtons = Array.from(document.querySelector('.div-main-grid').children);
+            
+    //         allButtons.forEach(e => {
+    //             e.style.backgroundColor = colorsRGB['default'];
+    //         })
+
+    //         selectedButton.style.backgroundColor = colorsRGB[color];
+    //     }
+    // }
+
+    // acender com temporizador para desligar
+    function flashColor(color) {
+        const selectedId = '#' + color;
+        const selectedButton = document.querySelector(selectedId);
+
+        if (selectedButton) {
+            selectedButton.style.backgroundColor = colorsRGB[color];
+
+            setTimeout(() => {
+                selectedButton.style.backgroundColor = colorsRGB['default'];
+            }, 500);
+        }
+    }
+    function getRandomFromArray(arrayParam) {
+        const randomId = Math.floor(Math.random() * arrayParam.length);
+        return arrayParam[randomId];
+    }
+
+    function getRandomColorSequence(colorsAmount) {
+        const randomColorSequence = [];
+
+        for (let i = 0; i < colorsAmount; i++) {
+            const color = getRandomFromArray(colorsArray);
+            randomColorSequence.push(color);
+        }
+
+        return randomColorSequence;
+    }
+    
+    function triggerButton(buttonColor) {
+        const buttonId = '#' + buttonColor;
+        const buttonElement = document.querySelector(buttonId);
+
+        flashColor(buttonColor);
+    }
+
+    function playSequence(randomColorSequence, startId) {
+        if (!randomColorSequence[startId+1]) {
+            setTimeout(() => {
+                // TODO REMOVE THIS
+                console.log(randomColorSequence[startId]);
+                triggerButton(randomColorSequence[startId])
+            }, 1000);
+            
+            return;
+        }
+
+        setTimeout(() => {
+            // TODO REMOVE THIS
+            console.log(randomColorSequence[startId]);
+            triggerButton(randomColorSequence[startId]);
+            playSequence(randomColorSequence, startId + 1)
+        }, 1000)
+    }
+
+    function startNewGame() {
+        sequenceAmount = 5;
+        const randomColorSequence = getRandomColorSequence(sequenceAmount)
+
+        playSequence(randomColorSequence, 0)
+        sequenceAmount +=1
+    }
+</script>
+
+</html>
