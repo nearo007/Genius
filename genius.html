@@ -159,12 +159,12 @@
                 if (!randomColorSequence[startId + 1]) {
                     // TODO REMOVE THIS
                     console.log(randomColorSequence[startId]);
-                    
+
                     triggerButton(randomColorSequence[startId])
                     playButton.style.pointerEvents = 'auto';
                     return resolve();
                 }
-                
+
                 // TODO REMOVE THIS
                 console.log(randomColorSequence[startId]);
                 triggerButton(randomColorSequence[startId]);
@@ -181,13 +181,13 @@
     //         if (!randomColorSequence[startId + 1]) {
     //             // TODO REMOVE THIS
     //             console.log(randomColorSequence[startId]);
-                
+
     //             triggerButton(randomColorSequence[startId])
-        
+
     //             playButton.style.pointerEvents = 'all';
     //             return;
     //         }
-            
+
     //         // TODO REMOVE THIS
     //         console.log(randomColorSequence[startId]);
     //         triggerButton(randomColorSequence[startId]);
@@ -254,7 +254,7 @@
         buttons.forEach(buttonElement => {
             buttonElement.addEventListener('click', () => {
                 userSequence.push(buttonElement.id);
-    
+
                 // TODO REMOVE THIS
                 console.log(userSequence.length, sequenceAmount);
             })
@@ -272,26 +272,29 @@
             }, 200);
         })
     }
-    
+
     async function startNewGame() {
-        // TODO RETURN TO 1
-        // sequenceAmount = 1;
-        const randomColorSequence = getRandomColorSequence(sequenceAmount);
+        sequenceAmount = 1;
 
-        await playSequence(randomColorSequence, 0);
+        while (true) {
+            const randomColorSequence = getRandomColorSequence(sequenceAmount);
 
-        userSequence = await getUserSequence(sequenceAmount);
-        
-        console.log(userSequence, randomColorSequence)
-        if (arrayEquals(userSequence, randomColorSequence)) {
-            console.log('same!');
+            await playSequence(randomColorSequence, 0);
+
+            userSequence = await getUserSequence(sequenceAmount);
+
+            console.log(userSequence, randomColorSequence)
+            if (arrayEquals(userSequence, randomColorSequence)) {
+            }
+
+            else {
+                break;
+            }
+
+            sequenceAmount += 1;
         }
 
-        else {
-            console.log('different!');
-        }
-
-        sequenceAmount += 1;
+        window.alert('Fim de jogo!');
     }
 </script>
 
