@@ -120,6 +120,7 @@
         if (selectedButton) {
             selectedButton.style.backgroundColor = colorsRGB[color];
             audio = new Audio(colorAudioPaths[color]);
+            audio.volume = 0.1;
             audio.play();
 
             setTimeout(() => {
@@ -132,10 +133,10 @@
         return arrayParam[randomId];
     }
 
-    function getRandomColorSequence(colorsAmount) {
-        const randomColorSequence = [];
+    function getRandomColorSequence(totalColorsAmount, randomColorSequence) {
+        const missingColorsAmount = totalColorsAmount - randomColorSequence.length;
 
-        for (let i = 0; i < colorsAmount; i++) {
+        for (let i = 0; i < missingColorsAmount; i++) {
             const color = getRandomFromArray(colorsArray);
             randomColorSequence.push(color);
         }
@@ -172,53 +173,6 @@
             }, 1000);
         })
     }
-
-    // function playSequence(randomColorSequence, startId) {
-    //     const playButton = document.querySelector('.button-play');
-    //     playButton.style.pointerEvents = 'none';
-
-    //     setTimeout(() => {
-    //         if (!randomColorSequence[startId + 1]) {
-    //             // TODO REMOVE THIS
-    //             console.log(randomColorSequence[startId]);
-
-    //             triggerButton(randomColorSequence[startId])
-
-    //             playButton.style.pointerEvents = 'all';
-    //             return;
-    //         }
-
-    //         // TODO REMOVE THIS
-    //         console.log(randomColorSequence[startId]);
-    //         triggerButton(randomColorSequence[startId]);
-    //         playSequence(randomColorSequence, startId + 1);
-    //     }, 1000);
-    // }
-
-
-    // function playSequence(randomColorSequence, startId) {
-    //     const playButton = document.querySelector('.button-play');
-    //     playButton.style.pointerEvents = 'none';
-
-    //     if (!randomColorSequence[startId + 1]) {
-    //         setTimeout(() => {
-    //             // TODO REMOVE THIS
-    //             console.log(randomColorSequence[startId]);
-    //             triggerButton(randomColorSequence[startId])
-
-    //             playButton.style.pointerEvents = 'all';
-    //         }, 1000);
-
-    //         return;
-    //     }
-
-    //     setTimeout(() => {
-    //         // TODO REMOVE THIS
-    //         console.log(randomColorSequence[startId]);
-    //         triggerButton(randomColorSequence[startId]);
-    //         playSequence(randomColorSequence, startId + 1)
-    //     }, 1000)
-    // }
 
     // TODO ARRUMAR
     function toggleButtonClickable(buttonId) {
@@ -273,21 +227,24 @@
         })
     }
 
+    function checkUserAttempt(userSequence, randomColorSequence) {
+        return arrayEquals(userSequence, randomColorSequence);
+    }
+
     async function startNewGame() {
         sequenceAmount = 1;
+        let randomColorSequence = [];
 
         while (true) {
-            const randomColorSequence = getRandomColorSequence(sequenceAmount);
+            randomColorSequence = getRandomColorSequence(sequenceAmount, randomColorSequence);
 
             await playSequence(randomColorSequence, 0);
 
             userSequence = await getUserSequence(sequenceAmount);
 
             console.log(userSequence, randomColorSequence)
-            if (arrayEquals(userSequence, randomColorSequence)) {
-            }
 
-            else {
+            if (!checkUserAttempt(userSequence, randomColorSequence)) {
                 break;
             }
 
