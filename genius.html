@@ -168,7 +168,7 @@
         flashButton(buttonColor);
     }
 
-    function playSequence(randomColorSequence, startId) {
+    function playSequence(randomColorSequence, startId=0) {
         const playButton = document.querySelector('.button-play');
         playButton.style.pointerEvents = 'none';
 
@@ -206,16 +206,34 @@
         return arr1.every((value, index) => value === arr2[index]);
     }
 
-    function addButtonClickLogic() {
+    function addButtonClickLogic(randomColorSequence, resolveRound) {
         const buttons = document.querySelectorAll('[colorButton]');
+        let currentIndex = 0;
 
         buttons.forEach(buttonElement => {
-            buttonElement.addEventListener('click', () => {
-                userSequenceArr.push(buttonElement.id);
-                getUserSequence(userSequenceArr);
-            })
-        })
+            buttonElement.onclick = () => {
+                const clickedColor = buttonElement.id;
+                userSequenceArr.push(clickedColor);
+
+                // anima + som
+                flashButton(clickedColor);
+
+                // valida a posição atual
+                if (clickedColor !== randomColorSequence[currentIndex]) {
+                    resolveRound(false); // errou
+                    return;
+                }
+
+                currentIndex++;
+
+                // acertou toda a sequência
+                if (currentIndex === randomColorSequence.length) {
+                    resolveRound(true); // acertou
+                }
+            };
+        });
     }
+
 
     function clearArray(arr) {
         arr.length = 0;
@@ -235,43 +253,24 @@
         sequenceAmount = 1;
         let randomColorSequence = [];
 
-        addButtonClickLogic();
-
         while (true) {
-            console.log('\nnova iterassaum cussaum');
+
             randomColorSequence = getRandomColorSequence(sequenceAmount, randomColorSequence);
 
-            await playSequence(randomColorSequence, 0);
+            await playSequence(randomColorSequence);
 
-            let userSequenceSize = 0;
-            clearArray(userSequenceArr);
+            const userWon = await new Promise(resolve => {
+                clearArray(userSequenceArr);
+                addButtonClickLogic(randomColorSequence, resolve);
+            });
 
-            while (userSequenceSize < randomColorSequence.length) {
-                // TODO
-                console.log('abroba', userSequenceSize, randomColorSequence.length, userSequenceSize < randomColorSequence.length);
-                userSequence = await getUserSequence(userSequenceArr);
-
-                //TODO 
-                console.log('minxirica', userSequence, randomColorSequence, arrayEquals(userSequence, randomColorSequence))
-                if (!arrayEquals(userSequence, randomColorSequence)) {
-                    break;
-                }
-                userSequenceSize += 1;
-            }
-
-            if (!arrayEquals(userSequence, randomColorSequence)) {
+            if (!userWon) {
+                window.alert('Fim de jogo!');
                 break;
             }
 
-            //TODO REMOVE THIS
-            console.log('usersequence', userSequence);
-
-            console.log(userSequence, randomColorSequence)
-
-            sequenceAmount += 1;
+            sequenceAmount++;
         }
-
-        window.alert('Fim de jogo!');
     }
 </script>
 
