@@ -119,16 +119,22 @@
         green: 'rgb(123, 255, 0)',
     }
 
-    const colorAudioPaths = {
+    const audioPaths = {
         blue: './static/audio/C.mp3',
         red: './static/audio/F.mp3',
         yellow: './static/audio/G.mp3',
-        green: './static/audio/Asharp.mp3'
+        green: './static/audio/Asharp.mp3',
+        miss: './static/audio/C-Fsharp.mp3',
     }
 
     const colorsArray = ['blue', 'red', 'yellow', 'green'];
 
     let userSequenceArr = [];
+
+    function playAudio(audioParam, volume=0.1){
+        audioParam.volume = volume;
+        audioParam.play();
+    }
 
     function flashButton(color) {
         const selectedId = '#' + color;
@@ -136,9 +142,8 @@
 
         if (selectedButton) {
             selectedButton.style.backgroundColor = colorsRGB[color];
-            audio = new Audio(colorAudioPaths[color]);
-            audio.volume = 0.1;
-            audio.play();
+            audio = new Audio(audioPaths[color]);
+            playAudio(audio, 0.5);
 
             setTimeout(() => {
                 selectedButton.style.backgroundColor = colorsRGB['default'];
@@ -265,7 +270,13 @@
             });
 
             if (!userWon) {
-                window.alert('Fim de jogo!');
+                const audio = new Audio(audioPaths['miss']);
+                flashButton('blue');
+                flashButton('red');
+                flashButton('yellow');
+                flashButton('green');
+                playAudio(audio, 0.5);
+                // window.alert('Fim de jogo!');
                 break;
             }
 
