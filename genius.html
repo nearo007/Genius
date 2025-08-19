@@ -75,24 +75,23 @@
 
         .div-main-grid div:nth-child(1) {
             box-shadow: 0 0 45px rgb(0, 255, 200),
-                        inset 0 0 25px rgba(0, 174, 255, 0.473)
+                inset 0 0 25px rgba(0, 174, 255, 0.473)
         }
-        
+
         .div-main-grid div:nth-child(2) {
             box-shadow: 0 0 45px rgb(255, 0, 85),
-                        inset 0 0 25px rgba(255, 0, 85, 0.466);
+                inset 0 0 25px rgba(255, 0, 85, 0.466);
         }
-        
+
         .div-main-grid div:nth-child(3) {
             box-shadow: 0 0 45px rgb(208, 255, 0),
-                        inset 0 0 25px rgba(255, 251, 0, 0.473);
+                inset 0 0 25px rgba(255, 251, 0, 0.473);
         }
 
         .div-main-grid div:nth-child(4) {
             box-shadow: 0 0 45px rgb(123, 255, 0),
-                        0 0 25px rgba(123, 255, 0, 0.493)
+                0 0 25px rgba(123, 255, 0, 0.493)
         }
-        
     </style>
 </head>
 
@@ -128,6 +127,8 @@
     }
 
     const colorsArray = ['blue', 'red', 'yellow', 'green'];
+
+    let userSequenceArr = [];
 
     function flashButton(color) {
         const selectedId = '#' + color;
@@ -174,16 +175,11 @@
         return new Promise((resolve) => {
             setTimeout(() => {
                 if (!randomColorSequence[startId + 1]) {
-                    // TODO REMOVE THIS
-                    console.log(randomColorSequence[startId]);
-
                     triggerButton(randomColorSequence[startId])
                     playButton.style.pointerEvents = 'auto';
                     return resolve();
                 }
 
-                // TODO REMOVE THIS
-                console.log(randomColorSequence[startId]);
                 triggerButton(randomColorSequence[startId]);
                 resolve(playSequence(randomColorSequence, startId + 1));
             }, 1000);
@@ -195,7 +191,6 @@
         const buttonFullId = '#' + buttonId;
         buttonElement = document.querySelector(buttonFullId);
 
-        console.log(buttonElement.style.pointerEvents);
         if (buttonElement) {
             if (buttonElement.style.pointerEvents == 'auto') {
                 buttonElement.style.pointerEvents == 'none';
@@ -208,38 +203,27 @@
     }
 
     function arrayEquals(arr1, arr2) {
-        if (arr1.length !== arr2.length) {
-            return false;
-        }
-
         return arr1.every((value, index) => value === arr2[index]);
     }
 
-    function getUserSequence(sequenceAmount) {
-        const userSequence = [];
-
+    function addButtonClickLogic() {
         const buttons = document.querySelectorAll('[colorButton]');
-        console.log(buttons);
 
         buttons.forEach(buttonElement => {
             buttonElement.addEventListener('click', () => {
-                userSequence.push(buttonElement.id);
-
-                // TODO REMOVE THIS
-                console.log(userSequence.length, sequenceAmount);
+                userSequenceArr.push(buttonElement.id);
+                getUserSequence(userSequenceArr);
             })
         })
+    }
 
+    function clearArray(arr) {
+        arr.length = 0;
+    }
+
+    function getUserSequence(userSequenceArr) {
         return new Promise(resolve => {
-            const checkSequenceInterval = setInterval(() => {
-                // TODO REMOVE THIS
-                console.log('waiting');
-
-                if (userSequence.length == sequenceAmount) {
-                    clearInterval(checkSequenceInterval);
-                    return resolve(userSequence);
-                }
-            }, 200);
+            return resolve(userSequenceArr);
         })
     }
 
@@ -251,18 +235,38 @@
         sequenceAmount = 1;
         let randomColorSequence = [];
 
+        addButtonClickLogic();
+
         while (true) {
+            console.log('\nnova iterassaum cussaum');
             randomColorSequence = getRandomColorSequence(sequenceAmount, randomColorSequence);
 
             await playSequence(randomColorSequence, 0);
 
-            userSequence = await getUserSequence(sequenceAmount);
+            let userSequenceSize = 0;
+            clearArray(userSequenceArr);
 
-            console.log(userSequence, randomColorSequence)
+            while (userSequenceSize < randomColorSequence.length) {
+                // TODO
+                console.log('abroba', userSequenceSize, randomColorSequence.length, userSequenceSize < randomColorSequence.length);
+                userSequence = await getUserSequence(userSequenceArr);
 
-            if (!checkUserAttempt(userSequence, randomColorSequence)) {
+                //TODO 
+                console.log('minxirica', userSequence, randomColorSequence, arrayEquals(userSequence, randomColorSequence))
+                if (!arrayEquals(userSequence, randomColorSequence)) {
+                    break;
+                }
+                userSequenceSize += 1;
+            }
+
+            if (!arrayEquals(userSequence, randomColorSequence)) {
                 break;
             }
+
+            //TODO REMOVE THIS
+            console.log('usersequence', userSequence);
+
+            console.log(userSequence, randomColorSequence)
 
             sequenceAmount += 1;
         }
