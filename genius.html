@@ -161,6 +161,8 @@
     let userSequenceArr = [];
 
     let bestScore = JSON.parse(localStorage.getItem('bestScore')) || 0;
+    updateScore(0);
+
 
     function playAudio(audioParam, volume = 0.1) {
         audioParam.volume = volume;
@@ -246,12 +248,15 @@
         const scoreElement = document.querySelector('[score]').firstElementChild;
         scoreElement.innerHTML = `Score: ${score}`;
 
+        const bestScoreElement = document.querySelector('[score]').lastElementChild;
         if (score > bestScore) {
-            const bestScoreElement = document.querySelector('[score]').lastElementChild;
-            bestScoreElement.innerHTML = `Best: ${score}`;
+            bestScore = score;
+            bestScoreElement.innerHTML = `Best: ${bestScore}`;
 
-            localStorage.setItem('bestScore', JSON.stringify(score));
+            localStorage.setItem('bestScore', JSON.stringify(bestScore));
+            return;
         }
+        bestScoreElement.innerHTML = `Best: ${bestScore}`;
     }
 
     function addButtonClickLogic(randomColorSequence, resolveRound) {
@@ -321,7 +326,7 @@
                 flashButton('yellow');
                 flashButton('green');
                 playAudio(audio, 0.5);
-                
+
                 updateScore(0);
                 break;
             }
